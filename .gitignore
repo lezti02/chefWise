@@ -1,0 +1,19 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Angular
+node_modules/
+dist/
+
+# Secretos
+.env
+
+# Datos pesados
+data/raw/*
+models/*.pkl
+
+# Sistema
+.DS_Store
