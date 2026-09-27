@@ -1,0 +1,21 @@
+<a class="recipe-item" [routerLink]="['/receta', recipe.id]">
+  <div class="thumb"></div>
+  <div class="info">
+    <div class="name">{{ recipe.name }}</div>
+    <div class="meta">{{ metaOverride ?? (recipe.minutes + ' min · ' + recipe.servings + ' porciones') }}</div>
+  </div>
+  @if (showIcons) {
+    <div class="row-icons">
+      <button class="icon-btn" [class.on]="recipe.isFavorite" title="Favorita" (click)="onFavoriteClick($event)">
+        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
+          <path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.65-9.5 9-9.5 9z" />
+        </svg>
+      </button>
+      <button class="icon-btn" [class.on]="recipe.isSaved" title="Guardar para después" (click)="onSavedClick($event)">
+        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
+          <path d="M6 3h12v18l-6-4-6 4V3z" />
+        </svg>
+      </button>
+    </div>
+  }
+</a>

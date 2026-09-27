@@ -1,0 +1,48 @@
+<a class="back-link" routerLink="/">← Inicio</a>
+
+@if (recipe(); as r) {
+  <div class="detail-head">
+    <div>
+      <h1>{{ r.name }}</h1>
+      <div class="detail-meta">
+        <span>{{ r.minutes }} min</span>
+        <span>{{ r.servings }} porciones</span>
+        <span>{{ r.difficulty === 'facil' ? 'Fácil' : r.difficulty === 'intermedio' ? 'Intermedio' : 'Reto' }}</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="icon-btn" [class.on]="r.isFavorite" style="width:36px;height:36px;border:1px solid var(--line);" title="Favorita" (click)="toggleFavorite()">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+          <path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.65-9.5 9-9.5 9z" />
+        </svg>
+      </button>
+      <button class="icon-btn" [class.on]="r.isSaved" style="width:36px;height:36px;border:1px solid var(--line);" title="Guardar para después" (click)="toggleSaved()">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+          <path d="M6 3h12v18l-6-4-6 4V3z" />
+        </svg>
+      </button>
+      <button class="btn-primary" (click)="markCooked()">Cociné esto</button>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <p class="section-label">Ingredientes</p>
+      <ul class="ing-list">
+        @for (ing of r.ingredients; track ing.name) {
+          <li><span>{{ ing.name }}</span><span>{{ ing.amount }}</span></li>
+        }
+      </ul>
+    </div>
+    <div>
+      <p class="section-label">Preparación</p>
+      <ol class="steps">
+        @for (step of r.steps; track $index) {
+          <li>{{ step }}</li>
+        }
+      </ol>
+    </div>
+  </div>
+} @else {
+  <p class="page-sub">No encontramos esta receta.</p>
+}

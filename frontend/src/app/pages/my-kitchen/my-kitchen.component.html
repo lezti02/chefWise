@@ -1,0 +1,69 @@
+<h1 class="page-title">Mi cocina</h1>
+<p class="page-sub">Tu historial, lo que quieres cocinar después, y lo que sueles preparar más.</p>
+
+<div class="subtab-row">
+  <button class="subtab-btn" [class.active]="activeSub() === 'resumen'" (click)="setSub('resumen')">Resumen</button>
+  <button class="subtab-btn" [class.active]="activeSub() === 'historial'" (click)="setSub('historial')">Historial</button>
+  <button class="subtab-btn" [class.active]="activeSub() === 'favoritas'" (click)="setSub('favoritas')">Favoritas</button>
+  <button class="subtab-btn" [class.active]="activeSub() === 'quiero'" (click)="setSub('quiero')">Quiero cocinar</button>
+</div>
+
+@switch (activeSub()) {
+  @case ('resumen') {
+    <div class="stat-grid">
+      <div class="stat-card"><div class="num">{{ cookedThisMonth() }}</div><div class="lbl">Recetas cocinadas este mes</div></div>
+      <div class="stat-card"><div class="num">{{ newFavorites() }}</div><div class="lbl">Favoritas nuevas</div></div>
+      <div class="stat-card"><div class="num">{{ streakDays() }}</div><div class="lbl">Días seguidos cocinando en casa</div></div>
+      <div class="stat-card"><div class="num">{{ savedCount() }}</div><div class="lbl">Guardadas por probar</div></div>
+    </div>
+
+    <p class="section-label">Qué sueles cocinar más</p>
+    <div class="bar-list">
+      @for (s of recipeService.categoryStats(); track s.category) {
+        <div class="bar-row">
+          <div class="bar-top"><span>{{ labelFor(s.category) }}</span><span>{{ s.percent }}%</span></div>
+          <div class="bar-track"><div class="bar-fill" [style.width.%]="s.percent"></div></div>
+        </div>
+      }
+    </div>
+  }
+
+  @case ('historial') {
+    <div class="recipe-row">
+      @for (r of recipeService.history(); track r.id) {
+        <app-recipe-row
+          [recipe]="r"
+          [showIcons]="false"
+          [metaOverride]="'Cocinado el ' + (r.lastCookedAt | date: 'd MMM')"
+        />
+      } @empty {
+        <p class="page-sub">Todavía no has marcado ninguna receta como cocinada.</p>
+      }
+    </div>
+  }
+
+  @case ('favoritas') {
+    <div class="results-grid">
+      @for (r of recipeService.favorites(); track r.id) {
+        <app-recipe-card [recipe]="r" (toggleFavorite)="onToggleFavorite($event)" (toggleSaved)="onToggleSaved($event)" />
+      } @empty {
+        <p class="page-sub">Aún no tienes recetas favoritas.</p>
+      }
+    </div>
+  }
+
+  @case ('quiero') {
+    <div class="recipe-row">
+      @for (r of recipeService.saved(); track r.id) {
+        <app-recipe-row
+          [recipe]="r"
+          [metaOverride]="'Guardada · ' + (r.neverCooked ? 'nunca cocinada' : 'ya la cocinaste antes')"
+          (toggleFavorite)="onToggleFavorite($event)"
+          (toggleSaved)="onToggleSaved($event)"
+        />
+      } @empty {
+        <p class="page-sub">No tienes recetas guardadas para después todavía.</p>
+      }
+    </div>
+  }
+}

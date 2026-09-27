@@ -1,0 +1,37 @@
+<a class="back-link" routerLink="/">← Inicio</a>
+<h1 class="page-title">Sorpréndeme</h1>
+<p class="page-sub">Elige lo que se ajuste a este momento. Buscamos algo que aún no has probado.</p>
+
+<p class="section-label">Antojo</p>
+<div class="chip-row">
+  @for (m of moods; track m) {
+    <span class="chip" [class.on]="selectedMoods().includes(m)" (click)="toggleMood(m)">{{ m }}</span>
+  }
+</div>
+
+<p class="section-label">Nivel de experiencia</p>
+<div class="chip-row">
+  @for (d of difficulties; track d.value) {
+    <span class="chip" [class.on]="selectedDifficulty() === d.value" (click)="setDifficulty(d.value)">{{ d.label }}</span>
+  }
+</div>
+
+<div class="field" style="max-width:280px;">
+  <label>Tiempo disponible</label>
+  <div class="stepper">
+    <button (click)="decMinutes()">−</button>
+    <span class="val">{{ maxMinutes() }} min</span>
+    <button (click)="incMinutes()">+</button>
+  </div>
+</div>
+
+<button class="btn-primary" (click)="showIdeas()">Mostrar ideas nuevas</button>
+
+<p class="section-label" style="margin-top:32px;">Ideas para ti</p>
+<div class="results-grid">
+  @for (r of suggestions(); track r.id) {
+    <app-recipe-card [recipe]="r" (toggleFavorite)="onToggleFavorite($event)" (toggleSaved)="onToggleSaved($event)" />
+  } @empty {
+    <p class="page-sub">No hay ideas nuevas con estos filtros todavía.</p>
+  }
+</div>

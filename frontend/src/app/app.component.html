@@ -1,0 +1,26 @@
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">ChefWise</div>
+    <nav class="side">
+      <a class="nav-item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
+      <a class="nav-item" routerLink="/sorprendeme" routerLinkActive="active">Sorpréndeme</a>
+      <a class="nav-item" routerLink="/con-lo-que-tengo" routerLinkActive="active">Con lo que tengo</a>
+      <a class="nav-item" routerLink="/mi-cocina" routerLinkActive="active">Mi cocina</a>
+    </nav>
+    <div class="sidebar-foot">Diplomado ML · ChefWise</div>
+  </aside>
+
+  <main>
+    <router-outlet />
+  </main>
+</div>
+
+<nav class="bottom-nav">
+  <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
+  <a routerLink="/sorprendeme" routerLinkActive="active">Sorpréndeme</a>
+  <a routerLink="/con-lo-que-tengo" routerLinkActive="active">Tengo</a>
+  <a routerLink="/mi-cocina" routerLinkActive="active">Mi cocina</a>
+</nav>
+
+<!-- Global: visible en cualquier vista, no solo dentro de una receta -->
+<app-chat-widget />
