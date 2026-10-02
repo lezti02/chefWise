@@ -1,0 +1,24 @@
+# Backend + recomendador (Python 3.13). Versiones con las que se probó el proyecto.
+# scikit-learn debe ser compatible con el que guardó models/*.joblib (1.9.x).
+fastapi>=0.142,<1
+uvicorn>=0.54,<1
+pydantic>=2.13,<3
+pandas>=3.0,<4
+numpy>=2.4,<3
+scipy>=1.17,<2
+scikit-learn>=1.9,<2
+joblib>=1.5,<2
+
+# Modelo 2 (notebooks/04_recomendador_embeddings.ipynb + src/embeddings.py).
+# Instala también torch y transformers. El backend actual NO las necesita (solo usa TF-IDF).
+sentence-transformers>=6.1,<7
+
+# Notebooks (01-04)
+ipykernel>=7,<8
+nbconvert>=7.17,<8
+matplotlib>=3.10,<4
+psutil>=7,<8
+
+# Tests
+pytest>=9,<10
+httpx>=0.28,<1

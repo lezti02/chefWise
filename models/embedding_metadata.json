@@ -1,0 +1,22 @@
+{
+  "model_name": "intfloat/multilingual-e5-small",
+  "embedding_dim": 384,
+  "n_recipes": 28853,
+  "dtype": "float32",
+  "normalized_l2": true,
+  "max_seq_length": 512,
+  "query_prefix": "query: ",
+  "passage_prefix": "passage: ",
+  "text_column": "recipe_text",
+  "texts_sha256": "05b2b7cba9b2b2769b934f13c93abeecd49134e624a13d3c053e54aa3f3d122a",
+  "batch_size": 64,
+  "device": "mps:0",
+  "build_seconds": 81.8,
+  "created_at_utc": "2026-10-02T10:29:39+00:00",
+  "libraries": {
+    "sentence_transformers": "6.1.0",
+    "torch": "2.14.1",
+    "transformers": "5.18.0",
+    "numpy": "2.5.3"
+  }
+}

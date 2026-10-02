@@ -14,6 +14,8 @@ dist/
 # Datos pesados
 data/raw/*
 models/*.pkl
+# Copia local del modelo de embeddings (~470 MB): se vuelve a descargar de Hugging Face.
+models/embedding_model/
 
 # Sistema
 .DS_Store
