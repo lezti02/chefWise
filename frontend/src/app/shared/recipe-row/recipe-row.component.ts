@@ -21,6 +21,14 @@ export class RecipeRowComponent {
   @Output() toggleFavorite = new EventEmitter<string>();
   @Output() toggleSaved = new EventEmitter<string>();
 
+  /** Renglón por defecto: solo muestra los datos que el dataset sí tiene. */
+  get meta(): string {
+    const r = this.recipe;
+    return [r.minutes ? `${r.minutes} min` : null, r.servings ? `${r.servings} porciones` : null]
+      .filter(Boolean)
+      .join(' · ');
+  }
+
   onFavoriteClick(e: Event): void {
     e.preventDefault();
     e.stopPropagation();

@@ -5,10 +5,16 @@
     <div>
       <h1>{{ r.name }}</h1>
       <div class="detail-meta">
-        <span>{{ r.minutes }} min</span>
-        <span>{{ r.servings }} porciones</span>
-        <span>{{ r.difficulty === 'facil' ? 'Fácil' : r.difficulty === 'intermedio' ? 'Intermedio' : 'Reto' }}</span>
+        @if (r.country) { <span>{{ r.country }}</span> }
+        @if (r.minutes) { <span>{{ r.minutes }} min</span> }
+        @if (r.servings) { <span>{{ r.servings }} porciones</span> }
+        @if (r.difficulty) { <span>{{ difficultyLabels[r.difficulty] }}</span> }
+        @if (r.rating) { <span>★ {{ r.rating }}</span> }
+        @if (r.sourceUrl) { <a [href]="r.sourceUrl" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;">Receta original</a> }
       </div>
+      @if (allergens().length) {
+        <div class="allergen-warn">Ojo: contiene {{ allergens().join(', ') }}, que marcaste en tus alergias.</div>
+      }
     </div>
     <div style="display:flex;gap:8px;align-items:center;">
       <button class="icon-btn" [class.on]="r.isFavorite" style="width:36px;height:36px;border:1px solid var(--line);" title="Favorita" (click)="toggleFavorite()">
@@ -28,21 +34,33 @@
   <div class="two-col">
     <div>
       <p class="section-label">Ingredientes</p>
-      <ul class="ing-list">
-        @for (ing of r.ingredients; track ing.name) {
-          <li><span>{{ ing.name }}</span><span>{{ ing.amount }}</span></li>
-        }
-      </ul>
+      @if (r.ingredients.length) {
+        <ul class="ing-list">
+          @for (ing of r.ingredients; track $index) {
+            <li><span>{{ ing.name }}</span><span>{{ ing.amount }}</span></li>
+          }
+        </ul>
+      } @else {
+        <p class="page-sub">Esta receta no tiene ingredientes registrados.</p>
+      }
     </div>
     <div>
       <p class="section-label">Preparación</p>
-      <ol class="steps">
-        @for (step of r.steps; track $index) {
-          <li>{{ step }}</li>
-        }
-      </ol>
+      @if (r.steps.length) {
+        <ol class="steps">
+          @for (step of r.steps; track $index) {
+            <li>{{ step }}</li>
+          }
+        </ol>
+      } @else {
+        <p class="page-sub">Esta receta no tiene instrucciones registradas.</p>
+      }
     </div>
   </div>
 } @else {
-  <p class="page-sub">No encontramos esta receta.</p>
+  @switch (state().status) {
+    @case ('loading') { <p class="page-sub">Cargando receta…</p> }
+    @case ('not-found') { <p class="page-sub">No encontramos esta receta.</p> }
+    @default { <p class="page-sub" role="alert">No pudimos cargar la receta. Revisa que el backend esté en marcha e inténtalo de nuevo.</p> }
+  }
 }

@@ -2,7 +2,7 @@
   <div class="thumb"></div>
   <div class="info">
     <div class="name">{{ recipe.name }}</div>
-    <div class="meta">{{ metaOverride ?? (recipe.minutes + ' min · ' + recipe.servings + ' porciones') }}</div>
+    <div class="meta">{{ metaOverride ?? meta }}</div>
   </div>
   @if (showIcons) {
     <div class="row-icons">

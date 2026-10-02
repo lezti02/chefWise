@@ -2,6 +2,17 @@
 <h1 class="page-title">Sorpréndeme</h1>
 <p class="page-sub">Elige lo que se ajuste a este momento. Buscamos algo que aún no has probado.</p>
 
+@if (recipeService.activeAllergyLabels().length) {
+  <p class="prefs-note">
+    Sin {{ recipeService.activeAllergyLabels().join(', ') }} ·
+    <a routerLink="/mi-cocina" [queryParams]="{ tab: 'preferencias' }">Editar alergias</a>
+  </p>
+} @else {
+  <p class="prefs-note">
+    ¿Tienes alguna alergia? <a routerLink="/mi-cocina" [queryParams]="{ tab: 'preferencias' }">Agrégala</a> y no te recomendaremos esos ingredientes.
+  </p>
+}
+
 <p class="section-label">Antojo</p>
 <div class="chip-row">
   @for (m of moods; track m) {
@@ -16,6 +27,25 @@
   }
 </div>
 
+<div class="field">
+  <label for="place">País o región</label>
+  <select id="place" class="select" [value]="selectedPlace()" (change)="setPlace($any($event.target).value)">
+    <option value="any">Cualquier lugar</option>
+    @for (region of regions; track region.name) {
+      @if (region.countries.length === 1) {
+        <option [value]="'country:' + region.countries[0]">{{ region.countries[0] }}</option>
+      } @else {
+        <optgroup [label]="region.name">
+          <option [value]="'region:' + region.name">Toda {{ region.name }}</option>
+          @for (c of region.countries; track c) {
+            <option [value]="'country:' + c">{{ c }}</option>
+          }
+        </optgroup>
+      }
+    }
+  </select>
+</div>
+
 <div class="field" style="max-width:280px;">
   <label>Tiempo disponible</label>
   <div class="stepper">
@@ -25,13 +55,24 @@
   </div>
 </div>
 
-<button class="btn-primary" (click)="showIdeas()">Mostrar ideas nuevas</button>
+<button class="btn-primary" [disabled]="loading()" (click)="showIdeas()">Mostrar ideas nuevas</button>
 
 <p class="section-label" style="margin-top:32px;">Ideas para ti</p>
 <div class="results-grid">
-  @for (r of suggestions(); track r.id) {
-    <app-recipe-card [recipe]="r" (toggleFavorite)="onToggleFavorite($event)" (toggleSaved)="onToggleSaved($event)" />
+  @for (r of visibleSuggestions(); track r.id) {
+    <app-recipe-card
+      [recipe]="r"
+      (toggleFavorite)="onToggleFavorite($event)"
+      (toggleSaved)="onToggleSaved($event)"
+      (hide)="onHide($event)"
+    />
   } @empty {
-    <p class="page-sub">No hay ideas nuevas con estos filtros todavía.</p>
+    @if (loading()) {
+      <p class="page-sub">Buscando ideas…</p>
+    } @else if (error()) {
+      <p class="page-sub" role="alert">{{ error() }}</p>
+    } @else {
+      <p class="page-sub">No hay ideas nuevas con estos filtros todavía.</p>
+    }
   }
 </div>

@@ -28,9 +28,8 @@ export class HomeComponent {
 
   /**
    * Últimas cocinadas, filtradas por categoría elegida y por texto buscado.
-   * NOTA: si conectas el buscador al backend (recomendado si tu catálogo
-   * crece), reemplaza este computed por una llamada a
-   * recipeService.search(term) hecha vía HttpClient, con un debounce.
+   * NOTA: este buscador solo filtra el historial local del usuario. Buscar en
+   * todo el catálogo requerirá un endpoint de búsqueda en el backend (con debounce).
    */
   recentFiltered = computed(() => {
     let list = this.recipeService.history().slice(0, 6);

@@ -165,6 +165,37 @@ p.page-sub { color: var(--ink-soft); margin: 0 0 26px; font-size: 0.95rem; max-w
 .rcard .body .name { font-weight: 500; font-size: 0.93rem; margin-bottom: 4px; }
 .rcard .body .meta { font-size: 0.78rem; color: var(--ink-soft); }
 .rcard:hover { border-color: var(--olive); }
+.country-badge { position: absolute; left: 10px; bottom: 8px; font-size: 0.72rem; font-weight: 500; color: #fff; background: rgba(0, 0, 0, 0.28); padding: 3px 8px; border-radius: 999px; }
+.allergen-warn { margin-top: 6px; font-size: 0.75rem; color: #a3402a; font-weight: 500; }
+:root[data-theme='dark'] .allergen-warn { color: #e9937c; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .allergen-warn { color: #e9937c; } }
+
+// ---------- Aviso flotante (ej. "Receta ocultada · Deshacer") ----------
+.toast {
+  position: fixed; left: 50%; transform: translateX(-50%); bottom: 24px; z-index: 40;
+  display: flex; align-items: center; gap: 14px; background: var(--ink); color: var(--bg);
+  padding: 10px 12px 10px 16px; border-radius: 10px; font-size: 0.85rem; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  max-width: calc(100vw - 32px);
+}
+.toast button { background: none; border: none; color: var(--mustard); font-family: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; padding: 4px 6px; }
+.toast button.close { color: inherit; opacity: 0.7; font-weight: 400; }
+@media (max-width: 760px) { .toast { bottom: calc(74px + env(safe-area-inset-bottom, 0px)); } }
+
+// ---------- Select (filtro de país / región) ----------
+.select {
+  appearance: none; width: 100%; max-width: 320px; padding: 10px 36px 10px 14px; border: 1px solid var(--line);
+  border-radius: var(--radius); background: var(--surface); color: var(--ink); font-family: inherit; font-size: 0.9rem; cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink-soft) 50%), linear-gradient(135deg, var(--ink-soft) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat;
+}
+.select:focus { outline: none; border-color: var(--olive); }
+
+// ---------- Resumen de alergias activas ----------
+.prefs-note { font-size: 0.82rem; color: var(--ink-soft); margin: -8px 0 22px; }
+.prefs-note a { color: var(--olive); font-weight: 500; text-decoration: underline; }
+:root[data-theme='dark'] .prefs-note a { color: var(--mustard); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .prefs-note a { color: var(--mustard); } }
+.link-btn { background: none; border: none; color: var(--olive); font-family: inherit; font-size: 0.82rem; font-weight: 500; cursor: pointer; padding: 4px 0; }
 
 // ---------- Íconos de favorito / guardar (reutilizados en card y row) ----------
 .card-icons { position: absolute; top: 8px; right: 8px; display: flex; gap: 6px; z-index: 2; }
@@ -190,8 +221,8 @@ p.page-sub { color: var(--ink-soft); margin: 0 0 26px; font-size: 0.95rem; max-w
 .steps li::before { content: counter(step); position: absolute; left: 0; top: 14px; width: 24px; height: 24px; border-radius: 50%; background: var(--olive); color: #fff; font-size: 0.78rem; display: flex; align-items: center; justify-content: center; }
 
 // ---------- Subtabs (Mi cocina) ----------
-.subtab-row { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 24px; }
-.subtab-btn { background: none; border: none; padding: 10px 4px; margin-right: 18px; font-family: inherit; font-size: 0.88rem; color: var(--ink-soft); cursor: pointer; border-bottom: 2px solid transparent; }
+.subtab-row { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 24px; overflow-x: auto; scrollbar-width: none; }
+.subtab-btn { flex: 0 0 auto; background: none; border: none; padding: 10px 4px; margin-right: 18px; font-family: inherit; font-size: 0.88rem; color: var(--ink-soft); cursor: pointer; border-bottom: 2px solid transparent; }
 .subtab-btn.active { color: var(--ink); border-bottom-color: var(--olive); font-weight: 500; }
 
 // ---------- Estadísticas ----------

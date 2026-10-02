@@ -2,6 +2,13 @@
 <h1 class="page-title">Con lo que tengo</h1>
 <p class="page-sub">Agrega lo que hay en tu cocina, poco o mucho. Ajustamos la receta a esa cantidad.</p>
 
+@if (recipeService.activeAllergyLabels().length) {
+  <p class="prefs-note">
+    Sin {{ recipeService.activeAllergyLabels().join(', ') }} ·
+    <a routerLink="/mi-cocina" [queryParams]="{ tab: 'preferencias' }">Editar alergias</a>
+  </p>
+}
+
 <div class="field">
   <label>Ingredientes disponibles</label>
   <div class="tag-input">
@@ -29,13 +36,24 @@
   <span class="chip" [class.on]="allowExtras()" (click)="setAllowExtras(true)">Permitir 1–2 extras</span>
 </div>
 
-<button class="btn-primary" (click)="search()">Buscar qué puedo cocinar</button>
+<button class="btn-primary" [disabled]="loading()" (click)="search()">Buscar qué puedo cocinar</button>
 
 <p class="section-label" style="margin-top:32px;">Con lo que ya tienes</p>
 <div class="results-grid">
-  @for (r of results(); track r.id) {
-    <app-recipe-card [recipe]="r" (toggleFavorite)="onToggleFavorite($event)" (toggleSaved)="onToggleSaved($event)" />
+  @for (r of visibleResults(); track r.id) {
+    <app-recipe-card
+      [recipe]="r"
+      (toggleFavorite)="onToggleFavorite($event)"
+      (toggleSaved)="onToggleSaved($event)"
+      (hide)="onHide($event)"
+    />
   } @empty {
-    <p class="page-sub">Agrega tus ingredientes y dale a "Buscar qué puedo cocinar".</p>
+    @if (loading()) {
+      <p class="page-sub">Buscando recetas…</p>
+    } @else if (error()) {
+      <p class="page-sub" role="alert">{{ error() }}</p>
+    } @else {
+      <p class="page-sub">Agrega tus ingredientes y dale a "Buscar qué puedo cocinar".</p>
+    }
   }
 </div>

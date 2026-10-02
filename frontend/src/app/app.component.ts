@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ChatWidgetComponent } from './shared/chat-widget/chat-widget.component';
+import { RecipeService } from './services/recipe.service';
 
 /**
  * Shell de la aplicación: sidebar (desktop) + bottom-nav (mobile) + el
@@ -15,4 +16,6 @@ import { ChatWidgetComponent } from './shared/chat-widget/chat-widget.component'
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {}
+export class AppComponent {
+  recipeService = inject(RecipeService);
+}

@@ -24,3 +24,11 @@
 
 <!-- Global: visible en cualquier vista, no solo dentro de una receta -->
 <app-chat-widget />
+
+@if (recipeService.lastHidden(); as r) {
+  <div class="toast" role="status">
+    <span>No volveremos a mostrarte «{{ r.name }}»</span>
+    <button (click)="recipeService.undoLastHide()">Deshacer</button>
+    <button class="close" title="Cerrar" (click)="recipeService.dismissLastHidden()">×</button>
+  </div>
+}

@@ -6,6 +6,7 @@
   <button class="subtab-btn" [class.active]="activeSub() === 'historial'" (click)="setSub('historial')">Historial</button>
   <button class="subtab-btn" [class.active]="activeSub() === 'favoritas'" (click)="setSub('favoritas')">Favoritas</button>
   <button class="subtab-btn" [class.active]="activeSub() === 'quiero'" (click)="setSub('quiero')">Quiero cocinar</button>
+  <button class="subtab-btn" [class.active]="activeSub() === 'preferencias'" (click)="setSub('preferencias')">Preferencias</button>
 </div>
 
 @switch (activeSub()) {
@@ -45,7 +46,7 @@
   @case ('favoritas') {
     <div class="results-grid">
       @for (r of recipeService.favorites(); track r.id) {
-        <app-recipe-card [recipe]="r" (toggleFavorite)="onToggleFavorite($event)" (toggleSaved)="onToggleSaved($event)" />
+        <app-recipe-card [recipe]="r" [showHide]="false" (toggleFavorite)="onToggleFavorite($event)" (toggleSaved)="onToggleSaved($event)" />
       } @empty {
         <p class="page-sub">Aún no tienes recetas favoritas.</p>
       }
@@ -63,6 +64,47 @@
         />
       } @empty {
         <p class="page-sub">No tienes recetas guardadas para después todavía.</p>
+      }
+    </div>
+  }
+
+  @case ('preferencias') {
+    <p class="section-label">Alergias e ingredientes que evitas</p>
+    <p class="page-sub" style="margin-bottom:14px;">
+      No te recomendaremos recetas que lleven estos ingredientes en Sorpréndeme ni en Con lo que tengo.
+    </p>
+    <div class="chip-row">
+      @for (a of recipeService.commonAllergens; track a.id) {
+        <span class="chip" [class.on]="isPresetOn(a.id)" (click)="togglePreset(a.id)">{{ a.label }}</span>
+      }
+    </div>
+
+    <div class="field">
+      <label>Otros ingredientes (escribe y presiona Enter)</label>
+      <div class="tag-input">
+        @for (term of recipeService.allergies().custom; track term) {
+          <span class="ing">
+            {{ term }}
+            <button (click)="removeCustomAllergy(term)" title="Quitar">×</button>
+          </span>
+        }
+        <input #allergyInput type="text" placeholder="ej. cilantro, fresa, chile habanero…" (keydown.enter)="addCustomAllergy(allergyInput)" />
+      </div>
+    </div>
+
+    <p class="section-label" style="margin-top:32px;">Recetas que pediste no volver a ver</p>
+    <div class="recipe-row">
+      @for (r of recipeService.hiddenRecipes(); track r.id) {
+        <div class="recipe-item" style="cursor:default;">
+          <div class="thumb"></div>
+          <div class="info">
+            <div class="name">{{ r.name }}</div>
+            <div class="meta">{{ hiddenMeta(r) }}</div>
+          </div>
+          <button class="link-btn" (click)="unhide(r.id)">Mostrar de nuevo</button>
+        </div>
+      } @empty {
+        <p class="page-sub" style="margin:16px;">No has ocultado ninguna receta.</p>
       }
     </div>
   }

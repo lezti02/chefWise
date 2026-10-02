@@ -1,15 +1,18 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { RecipeCardComponent } from '../../shared/recipe-card/recipe-card.component';
 import { RecipeRowComponent } from '../../shared/recipe-row/recipe-row.component';
 import { RecipeService } from '../../services/recipe.service';
+import { Recipe } from '../../models/recipe.model';
 
-type SubTab = 'resumen' | 'historial' | 'favoritas' | 'quiero';
+type SubTab = 'resumen' | 'historial' | 'favoritas' | 'quiero' | 'preferencias';
+const SUB_TABS: SubTab[] = ['resumen', 'historial', 'favoritas', 'quiero', 'preferencias'];
 
 /**
- * "Mi cocina": historial, favoritas, guardadas para después y estadísticas,
- * todo en un mismo lugar con pestañas internas. La pestaña "Favoritas" de
- * aquí reemplaza lo que antes era un ítem aparte en el menú principal.
+ * "Mi cocina": historial, favoritas, guardadas para después, estadísticas y
+ * preferencias (alergias + recetas ocultas), todo en un mismo lugar con
+ * pestañas internas. Acepta ?tab=<pestaña> para abrir una directamente.
  */
 @Component({
   selector: 'app-my-kitchen',
@@ -21,7 +24,10 @@ type SubTab = 'resumen' | 'historial' | 'favoritas' | 'quiero';
 export class MyKitchenComponent {
   activeSub = signal<SubTab>('resumen');
 
-  constructor(public recipeService: RecipeService) {}
+  constructor(public recipeService: RecipeService) {
+    const tab = inject(ActivatedRoute).snapshot.queryParamMap.get('tab') as SubTab | null;
+    if (tab && SUB_TABS.includes(tab)) this.activeSub.set(tab);
+  }
 
   setSub(tab: SubTab): void {
     this.activeSub.set(tab);
@@ -42,11 +48,36 @@ export class MyKitchenComponent {
     return map[category] ?? category;
   }
 
+  hiddenMeta(r: Recipe): string {
+    return [r.country, r.category ? this.labelFor(r.category) : null].filter(Boolean).join(' · ');
+  }
+
   onToggleFavorite(id: string): void {
     this.recipeService.toggleFavorite(id);
   }
 
   onToggleSaved(id: string): void {
     this.recipeService.toggleSaved(id);
+  }
+
+  isPresetOn(id: string): boolean {
+    return this.recipeService.allergies().presets.includes(id);
+  }
+
+  togglePreset(id: string): void {
+    this.recipeService.togglePresetAllergy(id);
+  }
+
+  addCustomAllergy(input: HTMLInputElement): void {
+    this.recipeService.addCustomAllergy(input.value);
+    input.value = '';
+  }
+
+  removeCustomAllergy(term: string): void {
+    this.recipeService.removeCustomAllergy(term);
+  }
+
+  unhide(id: string): void {
+    this.recipeService.unhide(id);
   }
 }

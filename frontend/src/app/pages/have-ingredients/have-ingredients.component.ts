@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { RecipeCardComponent } from '../../shared/recipe-card/recipe-card.component';
 import { RecipeService } from '../../services/recipe.service';
 import { Recipe } from '../../models/recipe.model';
@@ -16,9 +17,18 @@ export class HaveIngredientsComponent {
   servings = signal(2);
   /** false = "Solo con esto", true = "Permitir 1-2 extras" */
   allowExtras = signal(false);
-  results = signal<Recipe[]>([]);
+  loading = signal(false);
+  error = signal<string | null>(null);
+  private results = signal<Recipe[]>([]);
+  visibleResults = computed(() =>
+    this.recipeService.filterForUser(this.results()).map(r => this.recipeService.decorate(r))
+  );
 
-  constructor(private recipeService: RecipeService) {}
+  private request?: Subscription;
+
+  constructor(public recipeService: RecipeService) {
+    inject(DestroyRef).onDestroy(() => this.request?.unsubscribe());
+  }
 
   addIngredient(input: HTMLInputElement): void {
     const value = input.value.trim();
@@ -43,13 +53,25 @@ export class HaveIngredientsComponent {
   }
 
   /**
-   * Busca qué se puede cocinar. Mock — ver el comentario completo en
-   * RecipeService.getHaveIngredientsSuggestions para la forma del endpoint real.
+   * Busca qué se puede cocinar con los ingredientes escritos
+   * (POST /recommendations/by-ingredients). Personas y "extras" aún no los usa el modelo.
    */
   search(): void {
-    this.results.set(
-      this.recipeService.getHaveIngredientsSuggestions(this.ingredients(), this.servings(), this.allowExtras())
-    );
+    if (!this.ingredients().length) return;
+    this.request?.unsubscribe();
+    this.loading.set(true);
+    this.error.set(null);
+    this.request = this.recipeService.getHaveIngredientsSuggestions(this.ingredients()).subscribe({
+      next: list => {
+        this.results.set(list);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.results.set([]);
+        this.error.set('No pudimos obtener recetas del servidor. Revisa que el backend esté en marcha e inténtalo de nuevo.');
+        this.loading.set(false);
+      },
+    });
   }
 
   onToggleFavorite(id: string): void {
@@ -58,5 +80,9 @@ export class HaveIngredientsComponent {
 
   onToggleSaved(id: string): void {
     this.recipeService.toggleSaved(id);
+  }
+
+  onHide(id: string): void {
+    this.recipeService.hide(id);
   }
 }
